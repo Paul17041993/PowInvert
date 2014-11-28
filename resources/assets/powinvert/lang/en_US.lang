@@ -1,0 +1,7 @@
+itemGroup.powinvert=Power Inverter!
+tile.powinvert.inverter.name=Power Inverter
+tile.powinvert.inverter_tier0.name=Power Inverter (L)
+tile.powinvert.inverter_tier1.name=Power Inverter (M)
+tile.powinvert.inverter_tier2.name=Power Inverter (H)
+tile.powinvert.inverter_tier3.name=Power Inverter (UH)
+tile.powinvert.inverter_tier4.name=Power Inverter (E)

@@ -1,0 +1,16 @@
+[
+{
+  "modid": "PowInvertMod",
+  "name": "Power Inverter",
+  "description": "",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authors": ["Paul17041993"],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
