@@ -1,12 +1,13 @@
 package powinvert.powinvertmod.energy;
 
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.INetworkManager;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.Packet132TileEntityData;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.Packet;
+//import net.minecraft.network.Packet132TileEntityData;
+import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.Configuration;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.common.MinecraftForge;
 import ic2.api.energy.EnergyNet;
 import ic2.api.energy.event.EnergyTileLoadEvent;
@@ -20,7 +21,8 @@ import cpw.mods.fml.common.FMLCommonHandler;
 // a universal power interface for various uses, made by Paul17041993 :D
 public class UniPower extends TileEntity implements IEnergyHandler, IEnergySink, IEnergySource
 {
-	public static enum SideType{
+
+    public static enum SideType{
 		NONE(0),
 		RECEIVE(1),
 		SEND(2);
@@ -215,7 +217,7 @@ public class UniPower extends TileEntity implements IEnergyHandler, IEnergySink,
 	}
 
 	@Override
-	public final boolean canInterface(ForgeDirection from)
+	public final boolean canConnectEnergy(ForgeDirection from)
 	{
 		return CanReceiveOnSide(from) || CanSendOnSide(from);
 	}
@@ -240,7 +242,7 @@ public class UniPower extends TileEntity implements IEnergyHandler, IEnergySink,
 	
 	// sink
 	@Override
-	public final double demandedEnergyUnits()
+	public final double getDemandedEnergy()
 	{
 		//EnergyNet.instance.getPowerFromTier(tier);
 		//float headroom = ( maxUniPower - currentUniPower ) * uniRatioEU;
@@ -259,14 +261,14 @@ public class UniPower extends TileEntity implements IEnergyHandler, IEnergySink,
 	}
 
 	@Override
-	public final double injectEnergyUnits(ForgeDirection directionFrom, double amount)
+	public final double injectEnergy(ForgeDirection directionFrom, double amount, double voltage)
 	{
 		UniPowerInversion( (float)( amount)/uniRatioEU );
 		return 0;
 	}
 
 	@Override
-	public final int getMaxSafeInput()
+	public final int getSinkTier()
 	{
 		return Integer.MAX_VALUE; //ie can't be blown up nomatter what
 	}
@@ -300,8 +302,13 @@ public class UniPower extends TileEntity implements IEnergyHandler, IEnergySink,
 	{
 		UniPowerInversion( -(float)( amount)/uniRatioEU );
 	}
-	
-	//enet interaction
+
+    @java.lang.Override
+    public int getSourceTier() {
+        return 0;
+    }
+
+    //enet interaction
 	private boolean initialised = false;
 	//RF push
 	private TileEntity neighbourHandlers[] = {null,null,null,null,null,null};
@@ -343,7 +350,7 @@ public class UniPower extends TileEntity implements IEnergyHandler, IEnergySink,
 				
 				//not-so-effecient workaround so things work correctly
 				// im not sure why rebuilding the cache on world load doesnt work...
-				neighbourHandlers[side] = worldObj.getBlockTileEntity( xCoord + dir.offsetX, yCoord + dir.offsetY, zCoord + dir.offsetZ );
+				neighbourHandlers[side] = worldObj.getTileEntity(xCoord + dir.offsetX, yCoord + dir.offsetY, zCoord + dir.offsetZ);
 				
 				
 				if ( neighbourHandlers[side] == null )
@@ -360,7 +367,7 @@ public class UniPower extends TileEntity implements IEnergyHandler, IEnergySink,
 					
 					ForgeDirection from = dir.getOpposite();
 					
-					if( !handle.canInterface(from) )
+					if( !handle.canConnectEnergy(from) )
 						continue;
 					//System.out.println("pass caninterface");
 					
@@ -426,9 +433,9 @@ public class UniPower extends TileEntity implements IEnergyHandler, IEnergySink,
 
 	
 	@Override
-	public void onDataPacket(INetworkManager net, Packet132TileEntityData pkt)
+	public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity pkt)
     {
-		readFromNBT(pkt.data);
+		readFromNBT(pkt.func_148857_g());
     }
 
 	@Override
@@ -436,7 +443,7 @@ public class UniPower extends TileEntity implements IEnergyHandler, IEnergySink,
 	{
 	    NBTTagCompound tagCompound = new NBTTagCompound();
 	    writeToNBT(tagCompound);
-	    return new Packet132TileEntityData(xCoord, yCoord, zCoord, 0, tagCompound);
+	    return new S35PacketUpdateTileEntity(xCoord, yCoord, zCoord, 0, tagCompound);
 	}
 	
 	
@@ -461,7 +468,7 @@ public class UniPower extends TileEntity implements IEnergyHandler, IEnergySink,
 		if (FMLCommonHandler.instance().getEffectiveSide().isClient())
 			return;
 		
-		TileEntity tile = worldObj.getBlockTileEntity(x,y,z);
+		TileEntity tile = worldObj.getTileEntity(x,y,z);
 		
 		int side = 6;
 		if (x < xCoord)

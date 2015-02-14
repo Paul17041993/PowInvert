@@ -6,36 +6,36 @@ import powinvert.powinvertmod.Objects;
 import powinvert.powinvertmod.energy.UniPower;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.block.material.Material;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public class BlockPowerInverter extends BlockContainer
 {
 	private int tier = 0;
 	
-	public BlockPowerInverter(int id, Material material, int tier)
+	public BlockPowerInverter(Material material, int tier)
 	{
-		super(id, material);
+		super(material);
 		
 		this.tier = tier;
 		
 		setHardness(2.0F);
-		setUnlocalizedName(String.format("powinvert.inverter_tier%d",this.tier));
+        setBlockName(String.format("powinvert.inverter_tier%d",this.tier));
 		
 		setCreativeTab(Objects.mainTab);
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(World world)
+	public TileEntity createNewTileEntity(World world, int p_149915_2_)
 	{
 		try
 		{
@@ -49,35 +49,35 @@ public class BlockPowerInverter extends BlockContainer
 	}
 
 	@Override
-	public void onNeighborTileChange(World world,int x,int y,int z,int tileX,int tileY,int tileZ)
+	public void onNeighborChange(IBlockAccess iBlockAccess,int x,int y,int z,int tileX,int tileY,int tileZ)
 	{
-		TileEntity tile = world.getBlockTileEntity(x, y, z);
-		if(! (tile instanceof TileEntityPowerInverter) ) return;
+		TileEntity tile = iBlockAccess.getTileEntity(x, y, z);
+        if(! (tile instanceof TileEntityPowerInverter) ) return;
 		((TileEntityPowerInverter) tile).updateNeighbourTile(tileX,tileY,tileZ);
 		//((TileEntityPowerInverter) tile).setDirtyHandles();
 		
-		super.onNeighborTileChange(world,x,y,z,tileX,tileY,tileZ);
+		super.onNeighborChange(iBlockAccess, x, y, z, tileX, tileY, tileZ);
 	}
 	
 	@Override
-	public void onNeighborBlockChange(World world,int x,int y,int z,int blockID)
+	public void onNeighborBlockChange(World world,int x,int y,int z,Block block)
 	{
-		TileEntity tile = world.getBlockTileEntity(x, y, z);
-		if(! (tile instanceof TileEntityPowerInverter) ) return;
+		TileEntity tile = world.getTileEntity(x, y, z);
+        if(! (tile instanceof TileEntityPowerInverter) ) return;
 		((TileEntityPowerInverter) tile).setDirtyHandles();
 		
-		super.onNeighborBlockChange(world,x,y,z,blockID);
+		super.onNeighborBlockChange(world,x,y,z,block);
 	}
 	
 
     @SideOnly(Side.CLIENT)
-    protected Icon sendFIcon;
+    protected IIcon sendFIcon;
     @SideOnly(Side.CLIENT)
-    protected Icon reciFIcon;
+    protected IIcon reciFIcon;
 	
     @SideOnly(Side.CLIENT)
     @Override
-    public Icon getIcon(int side, int meta)
+    public IIcon getIcon(int side, int meta)
     {
     	switch(side)
     	{
@@ -92,10 +92,10 @@ public class BlockPowerInverter extends BlockContainer
 
     @SideOnly(Side.CLIENT)
     @Override
-    public Icon getBlockTexture(IBlockAccess iBlockAccess, int x, int y, int z, int side)
+    public IIcon getIcon(IBlockAccess iBlockAccess, int x, int y, int z, int side)
     {
-    	TileEntity tile = iBlockAccess.getBlockTileEntity(x, y, z);
-		if(! (tile instanceof TileEntityPowerInverter) ) return this.blockIcon;
+    	TileEntity tile = iBlockAccess.getTileEntity(x, y, z);
+        if(! (tile instanceof TileEntityPowerInverter) ) return this.blockIcon;
 		if( ((TileEntityPowerInverter) tile).CanSendOnSide(ForgeDirection.VALID_DIRECTIONS[side]) ) return sendFIcon;
 		if( ((TileEntityPowerInverter) tile).CanReceiveOnSide(ForgeDirection.VALID_DIRECTIONS[side]) ) return reciFIcon;
 		return this.blockIcon;
@@ -103,7 +103,7 @@ public class BlockPowerInverter extends BlockContainer
     
     @SideOnly(Side.CLIENT)
     @Override
-    public void registerIcons(IconRegister par1IconRegister)
+    public void registerBlockIcons(IIconRegister par1IconRegister)
     {
 		String name = this.getUnlocalizedName();
 		int ind = name.lastIndexOf('.') +1;
@@ -155,14 +155,13 @@ public class BlockPowerInverter extends BlockContainer
 			break;
 		}
 		
-		TileEntity tile = world.getBlockTileEntity(x, y, z);
-		
-		if(! (tile instanceof TileEntityPowerInverter) ) return;
+		TileEntity tile = world.getTileEntity(x, y, z);
+
+        if(! (tile instanceof TileEntityPowerInverter) ) return;
 		
 		((TileEntityPowerInverter) tile).SetTier(this.tier);
 		((TileEntityPowerInverter) tile).SetSidesFromOrientation(side);
 		
 		
 	}
-	
 }

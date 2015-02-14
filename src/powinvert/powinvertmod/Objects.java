@@ -1,6 +1,6 @@
 package powinvert.powinvertmod;
 
-import ic2.api.item.Items;
+//import ic2.api.item.Items;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -14,7 +14,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.Configuration;
+import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
 public class Objects {
@@ -42,14 +42,14 @@ public class Objects {
 		Material powerBlockMat = new Material(null);
 		//BlockPowerInverter = new BlockPowerInverter(powerBlockID,powerBlockMat);
 		
-		int powerBlockID[] = new int[UniPower.TIERS];
-		for(int i = 0; i < UniPower.TIERS; ++i)
-			powerBlockID[i] = config.getBlock(String.format("PowerInverterTier%d",i), 2857+i).getInt();
+		//int powerBlockID[] = new int[UniPower.TIERS];
+		//for(int i = 0; i < UniPower.TIERS; ++i)
+		//	powerBlockID[i] = config.getBlock(String.format("PowerInverterTier%d",i), 2857+i).getInt();
 
 		config.save();
 		
 		for(int i = 0; i < UniPower.TIERS; ++i)
-			BlockPowerInverter[i] = new BlockPowerInverter(powerBlockID[i],powerBlockMat,i);
+			BlockPowerInverter[i] = new BlockPowerInverter(powerBlockMat,i);
 		
 	}
 	
@@ -99,8 +99,8 @@ public class Objects {
 		GameRegistry.addRecipe(new ItemStack(BlockPowerInverter[4]), 
 				"RBR", "BLB", "RBR",
 				'B', new ItemStack(BlockPowerInverter[3]),
-				'R', new ItemStack(Block.blockRedstone),
-				'L', new ItemStack(Block.blockLapis));
+				'R', new ItemStack(Block.getBlockFromName("blockRedstone")),
+				'L', new ItemStack(Block.getBlockFromName("blockLapis")));
 	}
 
 }

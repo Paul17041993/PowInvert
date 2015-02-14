@@ -3,11 +3,11 @@ package powinvert.powinvertmod.powerinverter;
 import powinvert.powinvertmod.energy.UniPower;
 import powinvert.powinvertmod.energy.UniPower.SideType;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.INetworkManager;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.Packet132TileEntityData;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.Packet;
+//import net.minecraft.network.packet.Packet132TileEntityData;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public class TileEntityPowerInverter extends UniPower
 {

@@ -2,6 +2,7 @@ package powinvert.powinvertmod;
 
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 
 public class PowInvertTab extends CreativeTabs
 {
@@ -10,11 +11,8 @@ public class PowInvertTab extends CreativeTabs
 		super("powinvert");
 	}
 
-	//@Override
-	//public Item getTabIconItem() {
-	//	return VPItems.vectronite_ingot;
-	//}
-	
-	//public boolean hasSearchBar()	{return true;}
-
+    @Override
+    public Item getTabIconItem() {
+        return new ItemStack(Objects.BlockPowerInverter[0]).getItem();
+    }
 }
